@@ -4,7 +4,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertTokenizer, BertModel
 from sentence_transformers import SentenceTransformer
 import torch
-import itertools
 import warnings
 
 warnings.filterwarnings("ignore")
