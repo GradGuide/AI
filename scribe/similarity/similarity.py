@@ -59,15 +59,3 @@ class Similarity:
         vectors = vectorizer.toarray()
         cosine_sim = cosine_similarity(vectors)
         return cosine_sim
-
-
-def print_sbert_similarities(paragraphs: List[str], sim: Similarity):
-    """
-    Print pairwise similarity scores for SBERT-encoded paragraphs.
-    """
-    similarities = sim.sbert_similarity(paragraphs)
-    for i, j in itertools.combinations(range(len(paragraphs)), 2):
-        similarity_score = similarities[i][j]
-        print(
-            f"Similarity between paragraph {i+1} and paragraph {j+1}: {similarity_score}"
-        )
