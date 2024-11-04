@@ -11,11 +11,9 @@ warnings.filterwarnings("ignore")
 
 class Similarity:
     def __init__(self):
-        # Initialize BERT tokenizer and model for `bert_similarity`
         self.bert_tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
         self.bert_model = BertModel.from_pretrained("bert-base-uncased")
 
-        # Initialize SBERT model for `sbert_similarity`
         self.sbert_model_name = "all-mpnet-base-v2"
         self.sbert_model = SentenceTransformer(self.sbert_model_name)
 
