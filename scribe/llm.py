@@ -1,9 +1,10 @@
+from typing import Union
 import google.generativeai as genai
 import os
 
 
 class LLM:
-    def __init__(self, api_key: str = os.environ.get("GEMINI_API_KEY")):
+    def __init__(self, api_key: Union[str, None] = os.environ.get("GEMINI_API_KEY")):
         self.api_key = api_key
         genai.configure(api_key=self.api_key)
         self.model = genai.GenerativeModel("gemini-1.5-flash")
