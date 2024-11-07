@@ -23,13 +23,20 @@ class LLM:
         temperature : float, optional
             The creativity level for the response.
         """
-        system_instruction = "You are an AI that provides summaries of the input text."
+        system_instruction = f"You are an AI that provides summaries of the input text only using {max_tokens} words."
 
         response = self.model.generate_content(
             [system_instruction, input_text],
+            safety_settings={
+                "HATE": "BLOCK_NONE",
+                "HARASSMENT": "BLOCK_NONE",
+                "SEXUAL": "BLOCK_NONE",
+                "DANGEROUS": "BLOCK_NONE",
+            },
             generation_config=genai.GenerationConfig(
                 max_output_tokens=max_tokens,
                 temperature=temperature,
             ),
         )
+
         return response.text
