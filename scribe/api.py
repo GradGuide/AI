@@ -2,9 +2,11 @@ from fastapi import FastAPI, HTTPException
 from typing import List, Tuple
 from .summary import Summary
 from .similarity import Similarity
+from .llm import LLM
 
 app = FastAPI()
 
+llm = LLM()
 summary = Summary()
 similarity = Similarity()
 
@@ -34,6 +36,24 @@ async def extract_keywords(text: str, num_keywords: int = 10):
         return summary.spacy_extract_keywords(text, num_keywords)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/summary/llm", response_model=str)
+async def gemini_summarize(text: str, max_tokens: int = 64, temperature: float = 0.3):
+    """
+    Endpoint to generate a summary using a large language model (Gemini).
+    - text: The input text to summarize.
+    - max_tokens: Maximum number of tokens for the summary.
+    - temperature: Creativity level for the summary.
+    """
+    try:
+        return llm.summarize(
+            input_text=text, max_tokens=max_tokens, temperature=temperature
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error during summarization: {str(e)}"
+        )
 
 
 # Similarity routes
