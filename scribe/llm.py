@@ -63,7 +63,7 @@ class LLM:
             max_tokens,
             temperature,
             additional_instructions,
-        ).text
+        ).text.strip()
 
     def answer_question(
         self,
@@ -93,4 +93,4 @@ class LLM:
             max_tokens,
             temperature,
             additional_instructions=[f"Context:\n```{context}\n```"],
-        ).text
+        ).text.strip()
