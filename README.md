@@ -5,8 +5,8 @@ drafts and unfinished code.
 - [x] similarity
 - [x] summary
 - [ ] grammer correction
-- [ ] Q&A LLM
-- [ ] Implement API
+- [x] Q&A LLM
+- [x] Implement API
 
 # AI
 
