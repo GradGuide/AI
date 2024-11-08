@@ -86,7 +86,7 @@ class LLM:
         temperature : float, optional
             The creativity level for the response.
         """
-        system_instruction = "You are an AI assistant that answer questions. Answer the following question based only on the context provided and nothing more."
+        system_instruction = "You are an AI assistant that answer questions. Answer the following question based only on the context provided and nothing more. keep the answer onpoint and short."
         return self._generate_content(
             f"Question:\n```{question}\n```",
             system_instruction,
