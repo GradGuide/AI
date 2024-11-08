@@ -1,14 +1,16 @@
 from fastapi import FastAPI, HTTPException
-from typing import List, Tuple
+from typing import List, Tuple, Dict, Union
 from .summary import Summary
 from .similarity import Similarity
 from .llm import LLM
+from .qna import QnA
 
 app = FastAPI()
 
 llm = LLM()
 summary = Summary()
 similarity = Similarity()
+qna = QnA()
 
 
 @app.post("/summary/bart", response_model=List[str])
@@ -96,3 +98,36 @@ async def compute_tfidf_similarity(sentences: List[str]):
         return similarity.tfidf_cosine_similarity(sentences)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# QnA routes
+@app.post("/qna/simple", response_model=Dict[str, Union[float, int, str]])
+async def simple_question(question: str, context: str):
+    """
+    Endpoint to answer simple one-word questions using a pre-trained transformer model.
+    - question: The question to be answered.
+    - context: The context in which to find the answer.
+    """
+    try:
+        return qna.simple_question(question, context)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/qna/advanced", response_model=str)
+async def answer_question(
+    question: str, context: str, max_tokens: int = 64, temperature: float = 0.3
+):
+    """
+    Endpoint to answer complex questions using a large language model.
+    - question: The question to be answered.
+    - context: The context in which to find the answer.
+    - max_tokens: Maximum number of tokens for the generated answer.
+    - temperature: Creativity level for the answer.
+    """
+    try:
+        return llm.answer_question(question, context, max_tokens, temperature)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error during question answering: {str(e)}"
+        )
