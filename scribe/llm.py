@@ -94,3 +94,31 @@ class LLM:
             temperature,
             additional_instructions=[f"Context:\n```{context}\n```"],
         ).text.strip()
+
+    def grammar_corrector(
+        self,
+        text: str,
+        max_tokens: int = 64,
+        temperature: float = 0.3,
+        additional_instructions: Optional[List[str]] = None,
+    ) -> str:
+        """
+        Correct the grammar and spelling of a given input text.
+
+        Parameters:
+        ----------
+        text : str
+            The text to be corrected.
+        max_tokens : int, optional
+            Maximum number of tokens.
+        temperature : float, optional
+            The creativity level for the response.
+        """
+        system_instruction = "You are an AI assistant that corrects grammar and spelling. rewrite the text and change what's necessary with no errors without any explaination."
+        return self._generate_content(
+            f"\n```{text}```",
+            system_instruction,
+            max_tokens,
+            temperature,
+            additional_instructions,
+        ).text.strip()
