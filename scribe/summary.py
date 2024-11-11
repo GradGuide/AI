@@ -1,4 +1,5 @@
 from typing import List, Tuple
+from .utils import process_in_batches
 import transformers
 import spacy
 from collections import Counter
@@ -14,6 +15,7 @@ class Summary:
         )
         self.nlp = spacy.load("en_core_web_sm")
 
+    @process_in_batches
     def bart_summarize(
         self, text: str, min_length: int = 5, max_length: int = 20
     ) -> List[str]:

@@ -2,6 +2,8 @@ from typing import List, Optional
 import google.generativeai as genai
 import os
 
+from .utils import process_in_batches
+
 
 class LLM:
     def __init__(self, api_key: Optional[str] = os.environ.get("GEMINI_API_KEY")):
@@ -37,6 +39,7 @@ class LLM:
 
         return response
 
+    @process_in_batches
     def summarize(
         self,
         input_text: str,
@@ -65,6 +68,7 @@ class LLM:
             additional_instructions,
         ).text.strip()
 
+    @process_in_batches
     def answer_question(
         self,
         question: str,
@@ -95,6 +99,7 @@ class LLM:
             additional_instructions=[f"Context:\n```{context}\n```"],
         ).text.strip()
 
+    @process_in_batches
     def grammar_corrector(
         self,
         text: str,

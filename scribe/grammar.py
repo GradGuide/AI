@@ -1,6 +1,7 @@
 from typing import Optional
 from transformers import pipeline
 from difflib import unified_diff
+from .utils import process_in_batches
 
 import warnings
 
@@ -14,6 +15,7 @@ class GrammarCorrector:
 
         self.result = None
 
+    @process_in_batches
     def correct(self, text: str) -> str:
         """
         Corrects the grammar of the input text.
