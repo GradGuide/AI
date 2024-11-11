@@ -13,7 +13,7 @@ similarity = Similarity()
 qna = QnA()
 
 
-@app.post("/summary/bart", response_model=List[str])
+@app.post("/summary/bart", response_model=Dict[str, str])
 async def summarize_text(text: str, min_length: int = 5, max_length: int = 20):
     """
     Endpoint to summarize text using BART.
@@ -59,7 +59,7 @@ async def gemini_summarize(text: str, max_tokens: int = 64, temperature: float =
 
 
 # Similarity routes
-@app.post("/similarity/bert", response_model=float)
+@app.post("/similarity/bert", response_model=List[List[float]])
 async def compute_bert_similarity(sentences: List[str]):
     """
     Endpoint to compute similarity between two sentences using BERT.

@@ -20,7 +20,7 @@ class Summary:
         """
         Summarize the input text using BART.
         """
-        return self.summarizer(text, min_length=min_length, max_length=max_length)
+        return self.summarizer(text, min_length=min_length, max_length=max_length)[0]
 
     def spacy_extract_keywords(
         self, text: str, num_keywords: int = 10

@@ -27,7 +27,7 @@ class Similarity:
         )
         return tokens["input_ids"], tokens["attention_mask"]
 
-    def bert_similarity(self, sentences: List[str]) -> float:
+    def bert_similarity(self, sentences: List[str]) -> List[List[float]]:
         """
         Compute similarity using BERT embeddings for two sentences.
         """
@@ -38,7 +38,7 @@ class Similarity:
             sentence_embeddings = outputs.last_hidden_state[:, 0, :].numpy()
 
         similarity = cosine_similarity([sentence_embeddings[0], sentence_embeddings[1]])
-        return similarity[0][1]
+        return similarity
 
     def sbert_similarity(self, paragraphs: List[str]) -> List[List[float]]:
         """
