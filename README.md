@@ -10,27 +10,113 @@ install dependencies with `pip install -r requirements.txt`
 fastapi dev scribe/api.py
 ```
 
-## API Reference
-### `QnA`
+## Usage
 
-- `simple_question(question: str, context: str) -> Dict[str, Union[str, float]]`: Answers a simple question based on the provided context.
+### Summarization
+```python
+from scribe import Summary
 
-### `LLM`
+# Initialize the Summary class
+summarizer = Summary()
 
-- `summarize(input_text: str, max_tokens: int = 64, temperature: float = 0.3) -> str`: Summarizes the input text.
-- `answer_question(question: str, context: str, max_tokens: int = 64, temperature: float = 0.3) -> str`: Answers a question based on the provided context.
-- `grammar_corrector(text: str, max_tokens: int = 64, temperature: float = 0.3) -> str`: Corrects grammar and spelling in the input text.
+# Summarize text
+text = "Artificial intelligence is transforming industries across the globe. It offers opportunities for innovation and growth."
+summary = summarizer.bart_summarize(text)
+print("Summary:", summary)
+```
 
-### `Summary`
+### Keyword Extraction
+```python
+# Extract keywords
+keywords = summarizer.spacy_extract_keywords(text, num_keywords=5)
+print("Keywords:", keywords)
+```
 
-- `bart_summarize(text: str, min_length: int = 5, max_length: int = 20) -> List[str]`: Summarizes the input text using BART.
-- `spacy_extract_keywords(text: str, num_keywords: int = 10) -> List[Tuple[str, int]]`: Extracts keywords from the input text using spaCy.
+### Text Similarity
 
-### `Similarity`
+#### BERT Similarity
+```python
+from scribe import Similarity
 
-- `bert_similarity(sentences: List[str]) -> float`: Computes similarity between two sentences using BERT.
-- `sbert_similarity(paragraphs: List[str]) -> List[List[float]]`: Computes similarity between multiple paragraphs using SBERT.
-- `tfidf_cosine_similarity(sentences: List[str]) -> List[List[float]]`: Computes similarity between multiple sentences using TF-IDF.
+# Initialize the Similarity class
+similarity_tool = Similarity()
+
+# Compute similarity between two sentences using BERT
+sentences = [
+    "Artificial intelligence is fascinating.",
+    "Machine learning is a subset of artificial intelligence."
+]
+similarity = similarity_tool.bert_similarity(sentences)
+print("BERT Similarity:", similarity)
+```
+
+#### SBERT Similarity
+```python
+# Compute similarity for multiple paragraphs using SBERT
+paragraphs = [
+    "Artificial intelligence powers many modern applications.",
+    "Deep learning and AI have revolutionized technology."
+]
+sbert_similarity = similarity_tool.sbert_similarity(paragraphs)
+print("SBERT Similarity:", sbert_similarity)
+```
+
+#### TF-IDF Cosine Similarity
+```python
+# Compute similarity for sentences using TF-IDF
+sentences = [
+    "Natural language processing is a key area of AI.",
+    "AI techniques are widely used in NLP."
+]
+tfidf_similarity = similarity_tool.tfidf_cosine_similarity(sentences)
+print("TF-IDF Similarity:", tfidf_similarity)
+```
+
+### Question Answering
+```python
+from scribe import QnA
+
+# Initialize the QnA class
+qna_tool = QnA()
+
+# Provide a question and context
+question = "What is artificial intelligence?"
+context = "Artificial intelligence (AI) is the simulation of human intelligence in machines that are programmed to think and learn."
+answer = qna_tool.simple_question(question, context)
+print("Answer:", answer)
+```
+
+### Generative AI
+
+#### Text Summarization
+```python
+from scribe import LLM
+
+# Initialize the LLM class
+llm_tool = LLM()
+
+# Generate a summary
+text = "Artificial intelligence and machine learning are rapidly advancing technologies."
+summary = llm_tool.summarize(text)
+print("Generated Summary:", summary)
+```
+
+#### Answer Questions
+```python
+# Answer a question based on context
+question = "What is the use of AI in modern technology?"
+context = "AI is widely used in applications such as virtual assistants, fraud detection, and personalized recommendations."
+answer = llm_tool.answer_question(question, context)
+print("Generated Answer:", answer)
+```
+
+#### Grammar Correction
+```python
+# Correct grammar and spelling
+text = "AI have many aplications in todays world."
+corrected_text = llm_tool.grammar_corrector(text)
+print("Corrected Text:", corrected_text)
+```
 
 
 ## License
