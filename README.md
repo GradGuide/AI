@@ -2,6 +2,17 @@
 
 ## Installation
 
+### Using virtualenv
+
+
+make a python virtual enviroment
+
+```shell
+python -m venv .env
+
+source .env/bin/activate
+```
+
 Install python libraries using:
 
 ```bash
@@ -15,6 +26,20 @@ sh ./scripts/install.sh
 ```
 
 Then you are good to go.
+
+### Using Docker
+
+build the dockerfile
+
+```
+docker build -t scribe .
+```
+
+run it using
+
+```bash
+docker run --rm -it --net=host scribe
+```
 
 ## Run experimental API
 
