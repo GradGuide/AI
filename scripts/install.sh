@@ -2,11 +2,11 @@
 
 # Download and install all models
 
-python -m spacy download en_core_web_sm
+python3 -m spacy download en_core_web_sm
 
-python -c "from scribe import Summary; Summary()"
-python -c "from scribe import Similarity; Similarity()"
-python -c "from scribe import QnA; QnA()"
-python -c "from scribe import GrammarCorrector; GrammarCorrector()"
+python3 -c "from scribe import Summary; Summary()"
+python3 -c "from scribe import Similarity; Similarity()"
+python3 -c "from scribe import QnA; QnA()"
+python3 -c "from scribe import GrammarCorrector; GrammarCorrector()"
 
 echo "[!] Done"
