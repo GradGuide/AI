@@ -86,6 +86,23 @@ answer = qna_tool.simple_question(question, context)
 print("Answer:", answer)
 ```
 
+### Grammar Correction with Diff
+```python
+from scribe import GrammarCorrector
+
+grammar_tool = GrammarCorrector()
+
+# Grammar correction
+original_text = "This is an sentence with errors."
+corrected_text = grammar_tool.correct(original_text)
+print("Corrected Text:", corrected_text)
+
+# Diff of changes
+diff = grammar_tool.diff(original_text, corrected_text)
+print("Diff:")
+print(diff)
+```
+
 ### Generative AI
 
 #### Text Summarization
