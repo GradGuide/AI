@@ -2,7 +2,19 @@
 
 ## Installation
 
-install dependencies with `pip install -r requirements.txt`
+Install python libraries using:
+
+```bash
+pip install -r requirements
+```
+
+Then download all the models
+
+```bash
+sh ./scripts/install.sh
+```
+
+Then you are good to go.
 
 ## Run experimental API
 
