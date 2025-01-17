@@ -6,10 +6,16 @@ from .utils import process_in_batches
 
 
 class LLM:
+    __SUPPORTED_LANGUAGES = ["English", "Arabic", "French"]
+
     def __init__(self, api_key: Optional[str] = os.environ.get("GEMINI_API_KEY")):
         self.api_key = api_key
         genai.configure(api_key=self.api_key)
-        self.model = genai.GenerativeModel("gemini-1.5-flash")
+
+    def _create_model(self, system_instruction: str) -> genai.GenerativeModel:
+        return genai.GenerativeModel(
+            "gemini-1.5-flash", system_instruction=system_instruction
+        )
 
     def _generate_content(
         self,
@@ -18,12 +24,17 @@ class LLM:
         max_tokens: int,
         temperature: float,
         additional_instructions: Optional[List[str]] = None,
+        language: Optional[str] = None,
     ) -> genai.types.GenerateContentResponse:
-        instructions = [system_instruction, input_text]
+        if language and language in self.__SUPPORTED_LANGUAGES:
+            system_instruction = f"[Use {language} language] " + system_instruction
+
+        model = self._create_model(system_instruction)
+        instructions = [input_text]
         if additional_instructions:
             instructions.extend(additional_instructions)
 
-        response = self.model.generate_content(
+        response = model.generate_content(
             instructions,
             safety_settings={
                 "HATE": "BLOCK_NONE",
@@ -46,6 +57,7 @@ class LLM:
         max_tokens: int = 64,
         temperature: float = 0.3,
         additional_instructions: Optional[List[str]] = None,
+        language: Optional[str] = None,
     ) -> str:
         """
         Generates a summary of the provided input text using the generative AI model.
@@ -66,6 +78,7 @@ class LLM:
             max_tokens,
             temperature,
             additional_instructions,
+            language,
         ).text.strip()
 
     @process_in_batches
@@ -75,6 +88,7 @@ class LLM:
         context: str,
         max_tokens: int = 64,
         temperature: float = 0.3,
+        language: Optional[str] = None,
     ) -> str:
         """
         Answers a given question based on the provided context.
@@ -90,13 +104,17 @@ class LLM:
         temperature : float, optional
             The creativity level for the response.
         """
-        system_instruction = "You are an AI assistant that answer questions. Answer the following question based only on the context provided and nothing more. keep the answer onpoint and short."
+        system_instruction = (
+            "You are an AI assistant that answers questions. Answer the following question based only "
+            "on the context provided and nothing more. Keep the answer on point and short."
+        )
         return self._generate_content(
             f"Question:\n```{question}\n```",
             system_instruction,
             max_tokens,
             temperature,
             additional_instructions=[f"Context:\n```{context}\n```"],
+            language=language,
         ).text.strip()
 
     @process_in_batches
@@ -106,6 +124,7 @@ class LLM:
         max_tokens: int = 64,
         temperature: float = 0.3,
         additional_instructions: Optional[List[str]] = None,
+        language: Optional[str] = None,
     ) -> str:
         """
         Correct the grammar and spelling of a given input text.
@@ -119,11 +138,15 @@ class LLM:
         temperature : float, optional
             The creativity level for the response.
         """
-        system_instruction = "You are an AI assistant that corrects grammar and spelling. rewrite the text and change what's necessary with no errors without any explaination."
+        system_instruction = (
+            "You are an AI assistant that corrects grammar and spelling. Rewrite the text and change "
+            "what's necessary with no errors, without any explanation."
+        )
         return self._generate_content(
             f"\n```{text}```",
             system_instruction,
             max_tokens,
             temperature,
             additional_instructions,
+            language,
         ).text.strip()
