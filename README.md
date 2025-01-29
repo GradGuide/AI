@@ -49,6 +49,54 @@ fastapi dev scribe/api.py
 
 ## Usage
 
+### LLM
+```python
+from scribe import LLM
+
+# Initialize the LLM module with an API key
+llm = LLM(api_key="your_api_key")
+
+# Example 1: Summarization
+text_to_summarize = (
+	"Artificial intelligence (AI) is intelligence demonstrated by machines, "
+	"in contrast to the natural intelligence displayed by humans and animals. "
+	"Leading AI textbooks define the field as the study of intelligent agents: "
+	"any device that perceives its environment and takes actions that maximize "
+	"its chance of achieving its goals."
+	)
+summary = llm.summarize(text_to_summarize, max_tokens=50, temperature=0.5)
+print("Summary:", summary)
+
+# Example 2: Answering Questions
+context = (
+	"The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, "
+	"France. It is named after the engineer Gustave Eiffel, whose company "
+	"designed and built the tower."
+	)
+question = "Who designed the Eiffel Tower?"
+answer = llm.answer_question(question, context, max_tokens=30, temperature=0.3)
+print("Answer:", answer)
+
+# Example 3: Grammar Correction
+incorrect_text = "She go to the market every day."
+corrected_text = llm.grammar_corrector(incorrect_text, max_tokens=30, temperature=0.3)
+print("Corrected Text:", corrected_text)
+
+# Example 4: Summarization with Additional Instructions and Language Support
+summary_french = llm.summarize(text_to_summarize, max_tokens=50, temperature=0.5, language="French")
+print("Summary in French:", summary_french)
+
+# Example 5: Answering a Question with Additional Instructions
+question_with_instruction = llm.answer_question(
+    "What is the significance of the Eiffel Tower?",
+    context,
+    max_tokens=50,
+    temperature=0.3,
+    language="English"
+)
+print("Detailed Answer:", question_with_instruction)
+```
+
 ### Summarization
 ```python
 from scribe import Summary
