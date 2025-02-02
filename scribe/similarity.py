@@ -3,7 +3,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import BertTokenizer, BertModel
 from sentence_transformers import SentenceTransformer
+from nltk.tokenize import word_tokenize, sent_tokenize, blankline_tokenize
 import torch
+import nltk
 import warnings
 
 from .utils import process_in_batches
@@ -61,3 +63,27 @@ class Similarity:
         vectors = vectorizer.toarray()
         cosine_sim = cosine_similarity(vectors)
         return cosine_sim
+
+
+def find_common_text(text1: str, text2: str) -> dict[str, list[str]]:
+    """
+    find common words, paragraphs, sentences and return
+    them in a list.
+    """
+    words1 = set(word_tokenize(text1))
+    words2 = set(word_tokenize(text2))
+    common_words = list(words1 & words2)
+
+    sentence1 = set(sent_tokenize(text1))
+    sentence2 = set(sent_tokenize(text2))
+    common_sentences = list(sentence1 & sentence2)
+
+    paragraph1 = set(blankline_tokenize(text1))
+    paragraph2 = set(blankline_tokenize(text2))
+    common_paragraphs = list(paragraph1 & paragraph2)
+
+    return {
+        "common_words": common_words,
+        "common_sentences": common_sentences,
+        "common_paragraphs": common_paragraphs,
+    }

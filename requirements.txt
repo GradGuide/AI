@@ -1,6 +1,8 @@
 spacy
+nltk
 google-generativeai
 transformers[torch]
 fastapi[standard]
 scikit-learn
 sentence-transformers
+python-dotenv
