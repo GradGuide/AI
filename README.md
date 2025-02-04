@@ -50,52 +50,6 @@ fastapi dev scribe/api.py
 ## Usage
 
 ### LLM
-```python
-from scribe import LLM
-
-# Initialize the LLM module with an API key
-llm = LLM(api_key="your_api_key")
-
-# Example 1: Summarization
-text_to_summarize = (
-	"Artificial intelligence (AI) is intelligence demonstrated by machines, "
-	"in contrast to the natural intelligence displayed by humans and animals. "
-	"Leading AI textbooks define the field as the study of intelligent agents: "
-	"any device that perceives its environment and takes actions that maximize "
-	"its chance of achieving its goals."
-	)
-summary = llm.summarize(text_to_summarize, max_tokens=50, temperature=0.5)
-print("Summary:", summary)
-
-# Example 2: Answering Questions
-context = (
-	"The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, "
-	"France. It is named after the engineer Gustave Eiffel, whose company "
-	"designed and built the tower."
-	)
-question = "Who designed the Eiffel Tower?"
-answer = llm.answer_question(question, context, max_tokens=30, temperature=0.3)
-print("Answer:", answer)
-
-# Example 3: Grammar Correction
-incorrect_text = "She go to the market every day."
-corrected_text = llm.grammar_corrector(incorrect_text, max_tokens=30, temperature=0.3)
-print("Corrected Text:", corrected_text)
-
-# Example 4: Summarization with Additional Instructions and Language Support
-summary_french = llm.summarize(text_to_summarize, max_tokens=50, temperature=0.5, language="French")
-print("Summary in French:", summary_french)
-
-# Example 5: Answering a Question with Additional Instructions
-question_with_instruction = llm.answer_question(
-    "What is the significance of the Eiffel Tower?",
-    context,
-    max_tokens=50,
-    temperature=0.3,
-    language="English"
-)
-print("Detailed Answer:", question_with_instruction)
-```
 
 ### Summarization
 ```python
@@ -158,6 +112,9 @@ print("TF-IDF Similarity:", tfidf_similarity)
 ```
 
 ### Question Answering
+
+for simple one word answer.
+
 ```python
 from scribe import QnA
 
@@ -169,6 +126,40 @@ question = "What is artificial intelligence?"
 context = "Artificial intelligence (AI) is the simulation of human intelligence in machines that are programmed to think and learn."
 answer = qna_tool.simple_question(question, context)
 print("Answer:", answer)
+```
+
+for question generation and evaluation
+
+```
+qna = QnA()
+
+text = """
+Photosynthesis is the process used by plants, algae, and some bacteria to convert light energy into chemical energy.
+It occurs in the chloroplasts of plant cells, primarily using chlorophyll to capture sunlight.
+The process involves the intake of carbon dioxide and water, which are
+transformed into glucose and oxygen.
+"""
+
+# generate questions
+questions = qna.generate_questions(text, num_questions=5)
+print("Generated Questions:", questions)
+
+# ['What is photosynthesis?', 'Which organisms utilize photosynthesis?', 'Where does photosynthesis take place in plant cells?', 'What is the primary pigment used in photosynthesis?', 'What are the inputs and outputs of photosynthesis?']
+
+
+# Evaluate answers
+evaluations = qna.evaluate_answers(
+    questions=["What is photosynthesis?"], # or use the generated questions
+    user_answers=["the plants converts light energy into chemical energy"],
+    context=text
+)
+
+print(evaluations)
+# [('What is photosynthesis?', 6, 'The answer is partially correct, but lacks
+detail.  It correctly identifies the conversion of light energy into chemical
+energy. However, it omits key components such as the involvement of chlorophyll,
+carbon dioxide, water, glucose, and oxygen, and the location of the process
+(chloroplasts).')]
 ```
 
 ### Grammar Correction with Diff
@@ -190,36 +181,52 @@ print(diff)
 
 ### Generative AI
 
-#### Text Summarization
 ```python
 from scribe import LLM
 
-# Initialize the LLM class
-llm_tool = LLM()
+# Initialize the LLM module with an API key
+llm = LLM(api_key="your_api_key")
 
-# Generate a summary
-text = "Artificial intelligence and machine learning are rapidly advancing technologies."
-summary = llm_tool.summarize(text)
-print("Generated Summary:", summary)
-```
+# Example 1: Summarization
+text_to_summarize = (
+	"Artificial intelligence (AI) is intelligence demonstrated by machines, "
+	"in contrast to the natural intelligence displayed by humans and animals. "
+	"Leading AI textbooks define the field as the study of intelligent agents: "
+	"any device that perceives its environment and takes actions that maximize "
+	"its chance of achieving its goals."
+	)
+summary = llm.summarize(text_to_summarize, max_tokens=50, temperature=0.5)
+print("Summary:", summary)
 
-#### Answer Questions
-```python
-# Answer a question based on context
-question = "What is the use of AI in modern technology?"
-context = "AI is widely used in applications such as virtual assistants, fraud detection, and personalized recommendations."
-answer = llm_tool.answer_question(question, context)
-print("Generated Answer:", answer)
-```
+# Example 2: Answering Questions
+context = (
+	"The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, "
+	"France. It is named after the engineer Gustave Eiffel, whose company "
+	"designed and built the tower."
+	)
+question = "Who designed the Eiffel Tower?"
+answer = llm.answer_question(question, context, max_tokens=30, temperature=0.3)
+print("Answer:", answer)
 
-#### Grammar Correction
-```python
-# Correct grammar and spelling
-text = "AI have many aplications in todays world."
-corrected_text = llm_tool.grammar_corrector(text)
+# Example 3: Grammar Correction
+incorrect_text = "She go to the market every day."
+corrected_text = llm.grammar_corrector(incorrect_text, max_tokens=30, temperature=0.3)
 print("Corrected Text:", corrected_text)
-```
 
+# Example 4: Summarization with Additional Instructions and Language Support
+summary_french = llm.summarize(text_to_summarize, max_tokens=50, temperature=0.5, language="French")
+print("Summary in French:", summary_french)
+
+# Example 5: Answering a Question with Additional Instructions
+question_with_instruction = llm.answer_question(
+    "What is the significance of the Eiffel Tower?",
+    context,
+    max_tokens=50,
+    temperature=0.3,
+    language="English"
+)
+print("Detailed Answer:", question_with_instruction)
+```
 
 ## License
 بالحب

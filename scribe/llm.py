@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Any
 import google.generativeai as genai
 import os
 
@@ -25,27 +25,40 @@ class LLM:
         temperature: float,
         additional_instructions: Optional[List[str]] = None,
         language: Optional[str] = None,
+        response_mime_type: Optional[str] = None,
+        response_schema: Optional[Any] = None,
+        *args,
+        **kwargs,
     ) -> genai.types.GenerateContentResponse:
         if language and language in self.__SUPPORTED_LANGUAGES:
             system_instruction = f"[Use {language} language] " + system_instruction
 
         model = self._create_model(system_instruction)
         instructions = [input_text]
+
         if additional_instructions:
             instructions.extend(additional_instructions)
 
+        generation_config = genai.GenerationConfig(
+            max_output_tokens=max_tokens,
+            temperature=temperature,
+        )
+
+        if response_mime_type:
+            generation_config.response_mime_type = response_mime_type
+
+        if response_schema:
+            generation_config.response_schema = response_schema
+
         response = model.generate_content(
             instructions,
+            generation_config=generation_config,
             safety_settings={
                 "HATE": "BLOCK_NONE",
                 "HARASSMENT": "BLOCK_NONE",
                 "SEXUAL": "BLOCK_NONE",
                 "DANGEROUS": "BLOCK_NONE",
             },
-            generation_config=genai.GenerationConfig(
-                max_output_tokens=max_tokens,
-                temperature=temperature,
-            ),
         )
 
         return response
