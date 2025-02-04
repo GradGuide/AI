@@ -156,10 +156,10 @@ evaluations = qna.evaluate_answers(
 
 print(evaluations)
 # [('What is photosynthesis?', 6, 'The answer is partially correct, but lacks
-detail.  It correctly identifies the conversion of light energy into chemical
-energy. However, it omits key components such as the involvement of chlorophyll,
-carbon dioxide, water, glucose, and oxygen, and the location of the process
-(chloroplasts).')]
+# detail.  It correctly identifies the conversion of light energy into chemical
+# energy. However, it omits key components such as the involvement of chlorophyll,
+# carbon dioxide, water, glucose, and oxygen, and the location of the process
+# (chloroplasts).')]
 ```
 
 ### Grammar Correction with Diff
