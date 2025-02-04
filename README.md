@@ -130,7 +130,7 @@ print("Answer:", answer)
 
 for question generation and evaluation
 
-```
+```python
 qna = QnA()
 
 text = """
