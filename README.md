@@ -280,5 +280,5 @@ print("Detailed Answer:", question_with_instruction)
 | GrammarCorrector | `flan-t5-large-grammar-synthesis` | [jfleg](https://huggingface.co/datasets/jhu-clsp/jfleg) dataset                    | GLEU ≈ 76%                                                                                           |
 
 
-## License
+# License
 بالحب
