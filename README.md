@@ -228,5 +228,16 @@ question_with_instruction = llm.answer_question(
 print("Detailed Answer:", question_with_instruction)
 ```
 
+# Models Information
+
+| Module           | Model Name                        | Trained On                                                                         | Accuracy / Performance                                                                               |
+|------------------|-----------------------------------|------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| LLM              | `gemini-1.5-flash`                | Proprietary Google dataset                                                         | -                                                                                                    |
+| Similarity       | `google-t5/t5-base`               | [C4 (Clossal Clean Crawled Corpus)](https://paperswithcode.com/dataset/c4) dataset | GLUE = ~83.38%                                                                                       |
+| Summary          | `all-mpnet-base-v2`               | [MNLI](https://huggingface.co/datasets/nyu-mll/multi_nli) dataset                  | 87.47% using [nli-roberta-base](https://huggingface.co/cross-encoder/nli-roberta-base) for benchmark |
+| QnA              | `deepset/roberta-base-squad2`     | [SQuAD 2.0](https://huggingface.co/datasets/rajpurkar/squad_v2) dataset            | EM = 76.87%, F1=80.9%                                                                                |
+| GrammarCorrector | `flan-t5-large-grammar-synthesis` | [jfleg](https://huggingface.co/datasets/jhu-clsp/jfleg) dataset                    | GLEU ≈ 76%                                                                                           |
+
+
 ## License
 بالحب
