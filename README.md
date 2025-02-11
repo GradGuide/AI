@@ -1,6 +1,40 @@
 # GradGuide AI
 
+Scribe is a powerful and easy-to-use library for natural language processing (NLP) tasks. It integrates cutting-edge AI models to provide functionalities such as text summarization, question answering, grammar correction, and text similarity comparison.
+
+Built on top of Google Gemini, Transformer models, and BERT-based similarity techniques, Scribe enables developers to leverage advanced AI capabilities with minimal setup.
+
+**Table of Contents**
+
+- [GradGuide AI](#gradguide-ai)
+  - [Features](#features)
+  - [Installation](#installation)
+    - [Using virtualenv](#using-virtualenv)
+    - [Using Docker](#using-docker)
+  - [Run experimental API](#run-experimental-api)
+  - [Usage](#usage)
+    - [Summarization](#summarization)
+    - [Text Similarity](#text-similarity)
+    - [Question Answering](#question-answering)
+    - [Grammar Correction with Diff](#grammar-correction-with-diff)
+    - [Generative AI](#generative-ai)
+- [Models Information](#models-information)
+  - [License](#license)
+
+
+## Features
+
+- ✅ Text Summarization – Generate concise summaries of long texts.
+- ✅ Question Answering – Answer questions based on given context.
+- ✅ Question Generation and Answer Evaluation.
+- ✅ Grammar Correction – Fix grammar and spelling mistakes.
+- ✅ Text Similarity – Compare texts using BERT, SBERT, and TF-IDF.
+- ✅ Multi-language Support – Works in English, Arabic, French and more!.
+
+
 ## Installation
+
+You can install it using a virtualenv or Docker.
 
 ### Using virtualenv
 
@@ -49,8 +83,6 @@ fastapi dev scribe/api.py
 
 ## Usage
 
-### LLM
-
 ### Summarization
 ```python
 from scribe import Summary
@@ -64,7 +96,8 @@ summary = summarizer.bart_summarize(text)
 print("Summary:", summary)
 ```
 
-### Keyword Extraction
+**Keyword Extraction**:
+
 ```python
 # Extract keywords
 keywords = summarizer.spacy_extract_keywords(text, num_keywords=5)
@@ -73,7 +106,8 @@ print("Keywords:", keywords)
 
 ### Text Similarity
 
-#### BERT Similarity
+**BERT Similarity:**
+
 ```python
 from scribe import Similarity
 
@@ -89,7 +123,8 @@ similarity = similarity_tool.bert_similarity(sentences)
 print("BERT Similarity:", similarity)
 ```
 
-#### SBERT Similarity
+**SBERT Similarity:**
+
 ```python
 # Compute similarity for multiple paragraphs using SBERT
 paragraphs = [
@@ -100,7 +135,8 @@ sbert_similarity = similarity_tool.sbert_similarity(paragraphs)
 print("SBERT Similarity:", sbert_similarity)
 ```
 
-#### TF-IDF Cosine Similarity
+**TF-IDF Cosine Similarity:**
+
 ```python
 # Compute similarity for sentences using TF-IDF
 sentences = [
@@ -128,7 +164,7 @@ answer = qna_tool.simple_question(question, context)
 print("Answer:", answer)
 ```
 
-for question generation and evaluation
+for question generation and evaluation (Requires [LLM](#generative-ai) API Key)
 
 ```python
 qna = QnA()
