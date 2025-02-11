@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore")
 
 class GrammarCorrector:
     def __init__(self):
-        self.model_name = "pszemraj/grammar-synthesis-small"
+        self.model_name = "pszemraj/flan-t5-large-grammar-synthesis"
         self.corrector = pipeline("text2text-generation", self.model_name)
 
         self.result = None
