@@ -24,7 +24,7 @@ minimal setup.
     - [Grammar Correction with Diff](#grammar-correction-with-diff)
     - [Generative AI](#generative-ai)
 - [Models Information](#models-information)
-  - [License](#license)
+- [License](#license)
 
 
 ## Features
