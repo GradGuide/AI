@@ -1,133 +1,174 @@
-from fastapi import FastAPI, HTTPException
-from typing import List, Tuple, Dict, Union
-from .summary import Summary
-from .similarity import Similarity
+from fastapi import FastAPI, HTTPException, Query
+from typing import List
+import uvicorn
+import logging
+
+from .grammar import GrammarCorrector
 from .llm import LLM
 from .qna import QnA
+from .similarity import Similarity, find_common_text
+from .summary import Summary
 
-app = FastAPI()
-
-llm = LLM()
-summary = Summary()
-similarity = Similarity()
-qna = QnA()
+logging.basicConfig(level=logging.ERROR)
+logger = logging.getLogger(__name__)
 
 
-@app.post("/summary/bart", response_model=Dict[str, str])
-async def summarize_text(text: str, min_length: int = 5, max_length: int = 20):
-    """
-    Endpoint to summarize text using BART.
-    - text: The text to be summarized.
-    - min_length: Minimum length of the summary.
-    - max_length: Maximum length of the summary.
-    """
-    try:
-        return summary.bart_summarize(text, min_length, max_length)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+app = FastAPI(
+    title="Scribe API",
+    description="Use scribe functinos through an API",
+    version="1.0.0",
+)
+
+try:
+    llm = LLM()
+    summary_model = Summary()
+    similarity_calculator = Similarity()
+    qna_model = QnA()
+    grammar_corrector = GrammarCorrector()
+except Exception as e:
+    print(f"Error initializing models: {e}")
+    exit(1)
+
+# === API Endpoints ===
 
 
-@app.post("/summary/extract_keywords", response_model=List[Tuple[str, int]])
-async def extract_keywords(text: str, num_keywords: int = 10):
-    """
-    Endpoint to extract keywords from text using spaCy.
-    - text: The input text.
-    - num_keywords: Number of keywords to extract.
-    """
-    try:
-        return summary.spacy_extract_keywords(text, num_keywords)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/summary/llm", response_model=str)
-async def gemini_summarize(text: str, max_tokens: int = 64, temperature: float = 0.3):
-    """
-    Endpoint to generate a summary using a large language model (Gemini).
-    - text: The input text to summarize.
-    - max_tokens: Maximum number of tokens for the summary.
-    - temperature: Creativity level for the summary.
-    """
-    try:
-        return llm.summarize(
-            input_text=text, max_tokens=max_tokens, temperature=temperature
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Error during summarization: {str(e)}"
-        )
-
-
-# Similarity routes
-@app.post("/similarity/bert", response_model=List[List[float]])
-async def compute_bert_similarity(sentences: List[str]):
-    """
-    Endpoint to compute similarity between two sentences using BERT.
-    - sentences: List containing two sentences.
-    """
-    if len(sentences) != 2:
-        raise HTTPException(
-            status_code=400, detail="Please provide exactly two sentences."
-        )
-
-    try:
-        return similarity.bert_similarity(sentences)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/similarity/sbert", response_model=List[List[float]])
-async def compute_sbert_similarity(paragraphs: List[str]):
-    """
-    Endpoint to compute similarity for multiple paragraphs using SBERT.
-    - paragraphs: List of paragraphs.
-    """
-    try:
-        return similarity.sbert_similarity(paragraphs)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/similarity/tfidf", response_model=List[List[float]])
-async def compute_tfidf_similarity(sentences: List[str]):
-    """
-    Endpoint to compute similarity using TF-IDF. (cosine similarity)
-    - sentences: List of sentences.
-    """
-    try:
-        return similarity.tfidf_cosine_similarity(sentences)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-# QnA routes
-@app.post("/qna/simple", response_model=Dict[str, Union[float, int, str]])
-async def simple_question(question: str, context: str):
-    """
-    Endpoint to answer simple one-word questions using a pre-trained transformer model.
-    - question: The question to be answered.
-    - context: The context in which to find the answer.
-    """
-    try:
-        return qna.simple_question(question, context)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/qna/advanced", response_model=str)
-async def answer_question(
-    question: str, context: str, max_tokens: int = 64, temperature: float = 0.3
+@app.post("/llm/summarize")
+async def llm_summarize_endpoint(
+    text: str = Query(..., description="Text to summarize"),
+    max_tokens: int = Query(100, description="Maximum tokens in summary"),
+    temperature: float = Query(0.3, description="Temperature for LLM"),
 ):
-    """
-    Endpoint to answer complex questions using a large language model.
-    - question: The question to be answered.
-    - context: The context in which to find the answer.
-    - max_tokens: Maximum number of tokens for the generated answer.
-    - temperature: Creativity level for the answer.
-    """
     try:
-        return llm.answer_question(question, context, max_tokens, temperature)
+        summary_text = llm.summarize(text, max_tokens, temperature)
+        return {"summary": summary_text}
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Error during question answering: {str(e)}"
+            status_code=500, detail=f"Error summarizing: {str(e)}"
+        )  # Convert error to string
+
+
+@app.post("/llm/grammar_correct")
+async def llm_grammar_correct_endpoint(
+    text: str = Query(..., description="Text to correct"),
+):
+    try:
+        corrected_text = llm.grammar_corrector(text)
+        return {"corrected_text": corrected_text}
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error correcting grammar: {str(e)}"
         )
+
+
+@app.post("/llm/answer_question")
+async def llm_answer_question_endpoint(
+    question: str = Query(..., description="Question to answer"),
+    context: str = Query(..., description="Context for answering"),
+):
+    try:
+        answer = llm.answer_question(question, context)
+        return {"answer": answer}
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error answering question: {str(e)}"
+        )
+
+
+@app.post("/grammar/correct")
+async def grammar_correct_endpoint(
+    text: str = Query(..., description="Text to correct"),
+):
+    try:
+        corrected_text = grammar_corrector.correct(text)
+        return {"corrected_text": corrected_text}
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error correcting grammar: {str(e)}"
+        )
+
+
+@app.post("/similarity/sbert")
+async def sbert_similarity_endpoint(
+    sentences: List[str] = Query(..., description="List of sentences"),
+):
+    try:
+        similarity_matrix = similarity_calculator.sbert_similarity(sentences)
+        return {"similarity_matrix": similarity_matrix}
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error calculating similarity: {str(e)}"
+        )
+
+
+@app.post("/similarity/tfidf_cosine")
+async def tfidf_cosine_similarity_endpoint(
+    sentences: List[str] = Query(..., description="List of sentences"),
+):
+    try:
+        similarity_matrix = similarity_calculator.tfidf_cosine_similarity(sentences)
+        return {"similarity_matrix": similarity_matrix}
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error calculating TF-IDF cosine similarity: {str(e)}",
+        )
+
+
+@app.post("/similarity/bert")
+async def bert_similarity_endpoint(
+    sentences: List[str] = Query(..., description="List of sentences"),
+):
+    try:
+        similarity_matrix = similarity_calculator.bert_similarity(sentences)
+        return {"similarity_matrix": similarity_matrix}
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error calculating BERT similarity: {str(e)}"
+        )
+
+
+@app.post("/similarity/find_common_text")
+async def find_common_text_endpoint(
+    text1: str = Query(..., description="First text"),
+    text2: str = Query(..., description="Second text"),
+):
+    try:
+        common_text = find_common_text(text1, text2)
+        return common_text
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error finding common text: {str(e)}"
+        )
+
+
+@app.post("/qna/generate_questions")
+async def qna_generate_questions_endpoint(
+    text: str = Query(..., description="Text to generate questions from"),
+    num_questions: int = Query(5, description="Number of questions"),
+):
+    try:
+        questions = qna_model.generate_questions(text, num_questions)
+        return {"questions": questions}
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error generating questions: {str(e)}"
+        )
+
+
+@app.post("/qna/evaluate_answers")
+async def qna_evaluate_answers_endpoint(
+    questions: List[str] = Query(..., description="List of questions"),
+    user_answers: List[str] = Query(..., description="List of user answers"),
+    context: str = Query(..., description="Context for evaluating answers"),
+):
+    try:
+        results = qna_model.evaluate_answers(questions, user_answers, context)
+        return {"results": results}
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error evaluating answers: {str(e)}"
+        )
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
