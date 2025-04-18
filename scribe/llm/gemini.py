@@ -2,10 +2,11 @@ from typing import List, Optional, Any
 import google.generativeai as genai
 import os
 
-from .utils import smart_split
+from ..utils import smart_split
 
 
-class LLM:
+# Cloud inference using Gemini inference
+class GeminiLLM:
     __SUPPORTED_LANGUAGES = ["English", "Arabic", "French"]
 
     def __init__(self, api_key: Optional[str] = os.environ.get("GEMINI_API_KEY")):

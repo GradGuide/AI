@@ -2,7 +2,7 @@ from typing import List, Tuple
 from typing_extensions import TypedDict
 import json
 from transformers import pipeline
-from .llm import LLM
+from .llm.gemini import GeminiLLM
 
 
 class QuestionList(TypedDict):
@@ -18,7 +18,7 @@ class QnA:
     def __init__(self):
         self.model_name = "deepset/roberta-base-squad2"
         self.oracle = pipeline("question-answering", model=self.model_name)
-        self.llm = LLM()
+        self.llm = GeminiLLM()
 
     def generate_questions(
         self,
