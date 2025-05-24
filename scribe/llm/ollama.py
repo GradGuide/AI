@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Any, Union
 import ollama
 from ..utils import smart_split
 
@@ -11,7 +11,7 @@ class OllamaLLM:
 
     def _generate_content(
         self,
-        input_text: str,
+        input_text: Union[str, List[Any]],
         system_instruction: str,
         max_tokens: int,
         temperature: float,
@@ -26,10 +26,12 @@ class OllamaLLM:
         if additional_instructions:
             system_instruction += "\n\n" + "\n".join(additional_instructions)
 
-        messages = [{"role": "system", "content": system_instruction}]
+        messages: list[dict[str, Union[str, list]]] = [
+            {"role": "system", "content": system_instruction}
+        ]
         messages.append({"role": "user", "content": input_text})
 
-        options = {
+        options: dict[str, Any] = {
             "num_predict": max_tokens,
             "temperature": temperature,
         }

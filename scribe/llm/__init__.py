@@ -1,5 +1,4 @@
-# Wrapper for compatibility. i hate this
-from typing import List, Optional, Literal
+from typing import List, Optional, Literal, Any, Union
 from .ollama import OllamaLLM
 from .gemini import GeminiLLM
 import os
@@ -30,7 +29,7 @@ class LLM:
         additional_instructions: Optional[List[str]] = None,
         language: Optional[str] = None,
         **kwargs,
-    ) -> str:
+    ) -> Union[str, Any]:
         if self.provider == "gemini":
             response = self.llm._generate_content(
                 input_text=input_text,

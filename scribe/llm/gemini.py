@@ -1,8 +1,8 @@
-from typing import List, Optional, Any
+from typing import List, Optional, Any, Union
 import google.generativeai as genai
 import os
 
-from ..utils import smart_split
+from ..utils import smart_split, smart_join
 
 
 # Cloud inference using Gemini inference
@@ -20,7 +20,7 @@ class GeminiLLM:
 
     def _generate_content(
         self,
-        input_text: str,
+        input_text: Union[str, List[Any]],
         system_instruction: str,
         max_tokens: int,
         temperature: float,
@@ -188,18 +188,24 @@ class GeminiLLM:
             "detect the language and correct it in said language."
         )
 
-        split_texts = smart_split(text, max_tokens)
+        chunks, ids = smart_split(text, max_tokens)
 
-        corrected_texts = [
-            self._generate_content(
-                chunk,
-                system_instruction,
-                max_tokens,
-                temperature,
-                additional_instructions,
-                language,
-            ).text.strip()
-            for chunk in split_texts
-        ]
+        corrected_texts = []
+        for chunk in chunks:
+            if not chunk.strip():
+                corrected_texts.append("")
+            else:
+                corrected_texts.append(
+                    self._generate_content(
+                        chunk,
+                        system_instruction,
+                        max_tokens,
+                        temperature,
+                        additional_instructions,
+                        language,
+                    ).text.strip()
+                )
 
-        return " ".join(corrected_texts)
+        reconstructed = smart_join(corrected_texts, ids)
+
+        return reconstructed
