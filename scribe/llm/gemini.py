@@ -41,7 +41,7 @@ class GeminiLLM:
             instructions.extend(additional_instructions)
 
         generation_config = genai.GenerationConfig(
-            max_output_tokens=max_tokens,
+            # max_output_tokens=max_tokens,
             temperature=temperature,
         )
 
@@ -67,7 +67,7 @@ class GeminiLLM:
     def summarize(
         self,
         input_text: str,
-        max_tokens: int = 100,
+        max_tokens: int = 10240,
         temperature: float = 0.3,
         additional_instructions: Optional[List[str]] = None,
         language: Optional[str] = None,
@@ -85,33 +85,31 @@ class GeminiLLM:
             The creativity level for the response.
         """
         system_instruction = (
-            "You are an AI Assistant, Your only job is to provide summary for the text given, you should give no hints that you are an AI. "
+            "You are an AI Assistant, Your only job is to provide summary for the text given, you should give no hints that you are an AI. Do not say that is a summary, just output it. "
             "You do not explain the document/text, you just output the summary."
             "and do not ever interact with the user. For example:\n Text: [very long text]\n[Summary]\n"
-            "Can you provide a comprehensive summary of the given text? The "
-            "summary should cover all the key points and main ideas presented in the original text, "
-            "while also condensing the information into a concise and easy-to-understand format. "
-            "Please ensure that the summary includes relevant details and examples that support the main ideas, "
-            "while avoiding any unnecessary information or repetition. The length of the summary should be appropriate "
+            # "Can you provide a comprehensive summary of the given text? The "
+            # "summary should cover all the key points and main ideas presented in the original text, "
+            # "while also condensing the information into a concise and easy-to-understand format. "
+            # "Please ensure that the summary includes relevant details and examples that support the main ideas, "
+            # "while avoiding any unnecessary information or repetition. "
             "for the length and complexity of the original text, providing a clear and "
-            "accurate overview without omitting any important information. Use bullet points and headers if needed for clarity."
+            "accurate overview without omitting any important information. "
+            "Use bullet points and headers for clarity and to capture attention."
+            "Make sure to include headings and titles, and keep the order consistent. "
+            "Do not use markdown."
         )
 
-        split_texts = smart_split(input_text, max_tokens)
+        summary = self._generate_content(
+            input_text,
+            system_instruction,
+            max_tokens,
+            temperature,
+            additional_instructions,
+            language
+        ).text
 
-        summaries = [
-            self._generate_content(
-                chunk,
-                system_instruction,
-                max_tokens,
-                temperature,
-                additional_instructions,
-                language,
-            ).text.strip()
-            for chunk in split_texts
-        ]
-
-        return " ".join(summaries)
+        return summary
 
     def answer_question(
         self,
