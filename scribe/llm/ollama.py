@@ -32,7 +32,7 @@ class OllamaLLM:
         messages.append({"role": "user", "content": input_text})
 
         options: dict[str, Any] = {
-            "num_predict": max_tokens,
+            # "num_predict": max_tokens,
             "temperature": temperature,
         }
 
@@ -63,20 +63,30 @@ class OllamaLLM:
             "Only output the summary itself without any introductory text."
         )
 
-        split_texts = smart_split(input_text, max_tokens)
-        summaries = [
-            self._generate_content(
-                chunk,
-                system_instruction,
-                max_tokens,
-                temperature,
-                additional_instructions,
-                language,
-            )
-            for chunk in split_texts
-        ]
+        # split_texts = smart_split(input_text, max_tokens)
+        # summaries = [
+        #     self._generate_content(
+        #         chunk,
+        #         system_instruction,
+        #         max_tokens,
+        #         temperature,
+        #         additional_instructions,
+        #         language,
+        #     )
+        #     for chunk in split_texts
+        # ]
 
-        return "\n".join(summaries)
+
+        summary = self._generate_content(
+            input_text,
+            system_instruction,
+            max_tokens,
+            temperature,
+            additional_instructions,
+            language,
+        )
+
+        return summary
 
     def answer_question(
         self,
