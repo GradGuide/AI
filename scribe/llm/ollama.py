@@ -76,7 +76,6 @@ class OllamaLLM:
         #     for chunk in split_texts
         # ]
 
-
         summary = self._generate_content(
             input_text,
             system_instruction,
@@ -132,17 +131,21 @@ class OllamaLLM:
             "Only output the corrected text without explanations."
         )
 
-        split_texts = smart_split(text, max_tokens)
-        corrections = [
-            self._generate_content(
-                chunk,
-                system_instruction,
-                max_tokens,
-                temperature,
-                additional_instructions,
-                language,
-            )
-            for chunk in split_texts
-        ]
+        # split_texts = smart_split(text, max_tokens)
+        # corrections = [
+        #     self._generate_content(
+        #         chunk,
+        #         system_instruction,
+        #         max_tokens,
+        #         temperature,
+        #         additional_instructions,
+        #         language,
+        #     )
+        #     for chunk in split_texts
+        # ]
 
-        return " ".join(corrections)
+        corrections = self._generate_content(
+            text, system_instruction, max_tokens, additional_instructions, language
+        )
+
+        return corrections

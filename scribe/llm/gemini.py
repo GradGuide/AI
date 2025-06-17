@@ -2,7 +2,6 @@ from typing import List, Optional, Any, Union
 import google.generativeai as genai
 import os
 
-from ..utils import smart_split, smart_join
 
 
 # Cloud inference using Gemini inference
@@ -106,7 +105,7 @@ class GeminiLLM:
             max_tokens,
             temperature,
             additional_instructions,
-            language
+            language,
         ).text
 
         return summary
@@ -186,24 +185,33 @@ class GeminiLLM:
             "detect the language and correct it in said language."
         )
 
-        chunks, ids = smart_split(text, max_tokens)
+        # chunks, ids = smart_split(text, max_tokens)
 
-        corrected_texts = []
-        for chunk in chunks:
-            if not chunk.strip():
-                corrected_texts.append("")
-            else:
-                corrected_texts.append(
-                    self._generate_content(
-                        chunk,
-                        system_instruction,
-                        max_tokens,
-                        temperature,
-                        additional_instructions,
-                        language,
-                    ).text.strip()
-                )
+        # corrected_texts = []
+        # for chunk in chunks:
+        #     if not chunk.strip():
+        #         corrected_texts.append("")
+        #     else:
+        #         corrected_texts.append(
+        #             self._generate_content(
+        #                 chunk,
+        #                 system_instruction,
+        #                 max_tokens,
+        #                 temperature,
+        #                 additional_instructions,
+        #                 language,
+        #             ).text.strip()
+        #         )
 
-        reconstructed = smart_join(corrected_texts, ids)
+        # reconstructed = smart_join(corrected_texts, ids)
 
-        return reconstructed
+        corrected = self._generate_content(
+            text,
+            system_instruction,
+            max_tokens,
+            temperature,
+            additional_instructions,
+            language,
+        ).text.strip()
+
+        return corrected

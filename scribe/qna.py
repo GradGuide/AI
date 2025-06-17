@@ -46,7 +46,7 @@ class QnA:
                 response_mime_type="application/json",
                 response_schema=QuestionList,
             )
-            result = json.loads(response.text)
+            result = json.loads(response)
             return result.get("questions", [])
         except (json.JSONDecodeError, KeyError) as e:
             print(f"Error parsing questions: {e}")
@@ -78,7 +78,7 @@ class QnA:
                     response_mime_type="application/json",
                     response_schema=EvaluationResult,
                 )
-                evaluation = json.loads(response.text)
+                evaluation = json.loads(response)
                 results.append(
                     (
                         question,
